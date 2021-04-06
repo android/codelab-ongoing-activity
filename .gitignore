@@ -17,7 +17,10 @@ gen/
 
 # Ignore gradle files
 .gradle/
+# Local configuration file (sdk path, etc)
 build/
+captures/
+.externalNativeBuild
 
 # Local configuration file (sdk path, etc)
 local.properties
