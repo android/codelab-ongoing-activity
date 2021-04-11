@@ -15,10 +15,19 @@
      limitations under the License.
 -->
 <resources>
-    <string name="app_name">Ongoing Activity Code Lab</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
-    <string name="hello_world">Hello Square World!</string>
+    <string name="app_name">Walking Workout and OA</string>
+
+    <!-- Notification related strings. -->
+    <string name="walking_workout_notification_started_text">Walking points loading…</string>
+    <string name="notification_title">Walking Workout</string>
+    <string name="launch_activity">Launch activity</string>
+    <string name="stop_walking_workout_notification_text">Stop Walk</string>
+
+    <!-- Activity related strings. -->
+    <string name="default_greeting_message">Click to start your walking workout!</string>
+    <string name="start_walking_workout_button_text">Start Walking Workout</string>
+    <string name="stop_walking_workout_button_text">Stop Walking Workout</string>
+
+    <!-- Shared Service and Activity strings. -->
+    <string name="walking_points_text">%1$d points earned!</string>
 </resources>
