@@ -59,6 +59,11 @@ dependencies {
     // Wear specific libraries
     implementation 'androidx.wear:wear:1.1.0'
 
+    // TODO: Review dependencies for Ongoing Activity.
+    implementation "androidx.wear:wear-ongoing:1.0.0-alpha03"
+    // Includes LocusIdCompat and new Notification categories for Ongoing Activity.
+    implementation "androidx.core:core:1.5.0-rc01"
+
     // DataStore used to save simple data.
     implementation "androidx.datastore:datastore-preferences:1.0.0-alpha08"
 

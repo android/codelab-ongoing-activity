@@ -30,6 +30,8 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.wear.ongoing.OngoingActivity
+import androidx.wear.ongoing.OngoingActivityStatus
 import com.android.example.wear.ongoingactivity.data.WalkingWorkoutsRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -61,6 +63,9 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
     private val walkingWorkoutsRepository: WalkingWorkoutsRepository by lazy {
         (application as MainApplication).repository
     }
+
+    private lateinit var notificationManager: NotificationManager
+
     /*
      * Checks whether the bound activity has really gone away (in which case a foreground service
      * with notification is created) or simply orientation change (no-op).
@@ -71,17 +76,15 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
 
     private val localBinder = LocalBinder()
 
-    private lateinit var notificationManager: NotificationManager
-
     private var walkingWorkoutActive = false
-
-    private fun setActiveWalkingWorkout(active: Boolean) = lifecycleScope.launch {
-        walkingWorkoutsRepository.setActiveWalkingWorkout(active)
-    }
 
     // Created by coroutine to track mock location and sensor data for "Walking Points". If the
     // walking workout is cancelled, we need to cancel the work.
     private var mockDataForWalkingWorkoutJob: Job? = null
+
+    private fun setActiveWalkingWorkout(active: Boolean) = lifecycleScope.launch {
+        walkingWorkoutsRepository.setActiveWalkingWorkout(active)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -142,6 +145,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
             Log.d(TAG, "Start foreground service")
             val notification =
                 generateNotification(getString(R.string.walking_workout_notification_started_text))
+            // startForeground takes care of notificationManager.notify(...).
             startForeground(NOTIFICATION_ID, notification)
             serviceRunningInForeground = true
         }
@@ -210,12 +214,10 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
     private suspend fun mockSensorAndLocationForWalkingWorkout() {
         for (walkingPoints in 0 until 100) {
             if (serviceRunningInForeground) {
-                notificationManager.notify(
-                    NOTIFICATION_ID,
-                    generateNotification(
-                        getString(R.string.walking_points_text, walkingPoints)
-                    )
+                val notification = generateNotification(
+                    getString(R.string.walking_points_text, walkingPoints)
                 )
+                notificationManager.notify(NOTIFICATION_ID, notification)
             }
             Log.d(TAG, "mockSensorAndLocationForWalkingWorkout(): $walkingPoints")
             walkingWorkoutsRepository.setWalkingPoints(walkingPoints)
@@ -227,7 +229,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
      * Generates a BIG_TEXT_STYLE Notification that represent latest Walking Points while a
      * workout is active.
      */
-    private fun generateNotification(mainNotificationText: String): Notification {
+    private fun generateNotification(mainText: String): Notification {
         Log.d(TAG, "generateNotification()")
 
         // Main steps for building a BIG_TEXT_STYLE notification:
@@ -251,7 +253,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
 
         // 2. Build the BIG_TEXT_STYLE.
         val bigTextStyle = NotificationCompat.BigTextStyle()
-            .bigText(mainNotificationText)
+            .bigText(mainText)
             .setBigContentTitle(titleText)
 
         // 3. Set up main Intent/Pending Intents for notification.
@@ -272,13 +274,17 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
         val notificationCompatBuilder =
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
 
-        return notificationCompatBuilder
+        // TODO: Review Notification builder code.
+        val notificationBuilder = notificationCompatBuilder
             .setStyle(bigTextStyle)
             .setContentTitle(titleText)
-            .setContentText(mainNotificationText)
+            .setContentText(mainText)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
+            // Makes Notification an Ongoing Notification (a Notification with a background task).
             .setOngoing(true)
+            // For an Ongoing Activity, used to decide priority on the watch face.
+            .setCategory(NotificationCompat.CATEGORY_WORKOUT)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(
                 R.drawable.ic_walk, getString(R.string.launch_activity),
@@ -289,7 +295,35 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
                 getString(R.string.stop_walking_workout_notification_text),
                 servicePendingIntent
             )
+
+        // TODO: Create an Ongoing Activity.
+        val ongoingActivityStatus = OngoingActivityStatus.Builder()
+            // Sets the text used across various surfaces.
+            .addTemplate(mainText)
             .build()
+
+        val ongoingActivity =
+            OngoingActivity.Builder(applicationContext, NOTIFICATION_ID, notificationBuilder)
+                // Sets icon that will appear on the watch face in active mode. If it isn't set,
+                // the watch face will use the static icon in active mode.
+                .setAnimatedIcon(R.drawable.ic_walk)
+                // Sets the icon that will appear on the watch face in ambient mode.
+                // Falls back to Notification's smallIcon if not set. If neither is set,
+                // an Exception is thrown.
+                .setStaticIcon(R.drawable.ic_walk)
+                // Sets the tap/touch event, so users can re-enter your app from the
+                // other surfaces.
+                // Falls back to Notification's contentIntent if not set. If neither is set,
+                // an Exception is thrown.
+                .setTouchIntent(activityPendingIntent)
+                // In our case, sets the text used for the Ongoing Activity (more options are
+                // available for timers and stop watches).
+                .setStatus(ongoingActivityStatus)
+                .build()
+
+        ongoingActivity.apply(applicationContext)
+
+        return notificationBuilder.build()
     }
 
     /**

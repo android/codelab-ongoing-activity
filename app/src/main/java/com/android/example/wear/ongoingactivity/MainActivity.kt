@@ -76,10 +76,10 @@ class MainActivity : ComponentActivity() {
             if (field != newActiveStatus) {
                 field = newActiveStatus
                 if (newActiveStatus) {
-                    binding.batteryTrackingButton.text =
+                    binding.startStopWalkingWorkoutButton.text =
                         getString(R.string.stop_walking_workout_button_text)
                 } else {
-                    binding.batteryTrackingButton.text =
+                    binding.startStopWalkingWorkoutButton.text =
                         getString(R.string.start_walking_workout_button_text)
                 }
                 updateOutput(walkingPoints)
