@@ -22,4 +22,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Ongoing Activity Code Lab"
-include ':app'
+include ':complete'
