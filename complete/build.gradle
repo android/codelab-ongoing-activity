@@ -19,13 +19,13 @@ plugins {
 }
 
 android {
-    compileSdk 28
+    compileSdk 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.android.example.wear.ongoingactivity"
         minSdk 26
-        targetSdk 28
+        targetSdk 30
         versionCode 1
         versionName "1.0"
 

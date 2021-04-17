@@ -52,9 +52,14 @@
             </intent-filter>
         </activity>
 
+        <!--
+        If we really pulled sensor and location data, we would have to set the
+        foregroundServiceType to location.
+        -->
         <service
             android:name=".ForegroundOnlyWalkingWorkoutService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 </manifest>
