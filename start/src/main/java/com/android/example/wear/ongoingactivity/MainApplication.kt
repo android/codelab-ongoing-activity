@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        jcenter() // Warning: this repository is going to shut down soon
+package com.android.example.wear.ongoingactivity
+
+import android.app.Application
+import com.android.example.wear.ongoingactivity.data.WalkingWorkoutsRepository
+
+/**
+ * Sets up repository for all walking workout data.
+ */
+class MainApplication : Application() {
+    val repository by lazy {
+        WalkingWorkoutsRepository.getInstance(applicationContext)
     }
 }
-rootProject.name = "Ongoing Activity Code Lab"
-include ':start', ':complete'
