@@ -297,6 +297,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
             )
 
         // TODO: Create an Ongoing Activity.
+        // SKIP TODO FOR REVIEW STEP
 
         return notificationBuilder.build()
     }
