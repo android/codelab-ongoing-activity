@@ -321,6 +321,9 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
                 .setStatus(ongoingActivityStatus)
                 .build()
 
+        // Applies any Ongoing Activity updates to the notification builder.
+        // This method should always be called right before you build your notification,
+        // since an Ongoing Activity doesn't hold references to the context.
         ongoingActivity.apply(applicationContext)
 
         return notificationBuilder.build()
