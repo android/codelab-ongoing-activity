@@ -31,7 +31,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.ongoing.OngoingActivity
-import androidx.wear.ongoing.OngoingActivityStatus
+import androidx.wear.ongoing.Status
 import com.android.example.wear.ongoingactivity.data.WalkingWorkoutsRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
