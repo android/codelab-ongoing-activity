@@ -306,7 +306,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
             OngoingActivity.Builder(applicationContext, NOTIFICATION_ID, notificationBuilder)
                 // Sets icon that will appear on the watch face in active mode. If it isn't set,
                 // the watch face will use the static icon in active mode.
-                .setAnimatedIcon(R.drawable.ic_walk)
+                .setAnimatedIcon(R.drawable.animated_walk)
                 // Sets the icon that will appear on the watch face in ambient mode.
                 // Falls back to Notification's smallIcon if not set. If neither is set,
                 // an Exception is thrown.
