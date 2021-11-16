@@ -10,4 +10,4 @@ occupying the device (for example, a file download, sync operation, or an active
 connection).
 
 This repository is to be used in conjunction with the
-[Wear OS Ongoing Activity API Code Lab](https://codelabs.developers.google.com/codelabs/ongoing-activity).
+[Wear OS Ongoing Activity API Code Lab](https://developer.android.com/codelabs/ongoing-activity).
