@@ -19,13 +19,14 @@ plugins {
 }
 
 android {
-    compileSdk 30
-    buildToolsVersion "30.0.3"
+    compileSdk 34
+    
+    namespace "com.android.example.wear.ongoingactivity"
 
     defaultConfig {
         applicationId "com.android.example.wear.ongoingactivity"
-        minSdk 26
-        targetSdk 30
+        minSdk 30
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -39,42 +40,56 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
-        freeCompilerArgs += ["-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"]
+        jvmTarget = JavaVersion.VERSION_17.majorVersion
     }
-
     buildFeatures {
-        viewBinding true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion libs.versions.compose.compiler.get()
+    }
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
 dependencies {
-    implementation "androidx.activity:activity-ktx:1.3.1"
+    implementation libs.androidx.activity.ktx
 
     // Wear specific libraries
-    implementation 'androidx.wear:wear:1.1.0'
+    implementation libs.androidx.wear
 
-    // TODO: Review dependencies for Ongoing Activity.
-    implementation 'androidx.wear:wear-ongoing:1.0.0-beta01'
+    // Compose
+    implementation libs.androidx.activity.compose
+    implementation libs.wear.compose.material
+    implementation libs.wear.compose.foundation
+    implementation(libs.androidx.compose.ui.tooling)
+    implementation libs.androidx.lifecycle.viewmodel.compose
+    implementation libs.androidx.lifecycle.runtime.compose
+
+    implementation libs.compose.ui.tooling
+    implementation libs.compose.ui.tooling.preview
+
+    // Permissions
+    implementation(libs.accompanist.permissions)
+
+    implementation libs.androidx.wear.ongoing
     // Includes LocusIdCompat and new Notification categories for Ongoing Activity.
-    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation libs.androidx.core.ktx
 
     // DataStore used to save simple data.
-    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation libs.androidx.datastore.preferences
 
     // Lifecycle components
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.3.1"
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-service:2.3.1"
+    implementation libs.androidx.lifecycle.service
 
     // Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.core
 }

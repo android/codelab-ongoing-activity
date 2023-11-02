@@ -24,10 +24,15 @@
     <string name="stop_walking_workout_notification_text">Stop Walk</string>
 
     <!-- Activity related strings. -->
-    <string name="default_greeting_message">Click to start your walking workout!</string>
-    <string name="start_walking_workout_button_text">Start Walking Workout</string>
-    <string name="stop_walking_workout_button_text">Stop Walking Workout</string>
+    <string name="start_walking_workout_button_text">Start Workout</string>
+    <string name="stop_walking_workout_button_text">Stop Workout</string>
 
     <!-- Shared Service and Activity strings. -->
     <string name="walking_points_text">%1$d points earned!</string>
+
+    <!-- Permissions strings -->
+    <string name="permissions_explanation">
+         %1$s requires permission to show Ongoing Activity.
+    </string>
+    <string name="show_permissions">Launch</string>
 </resources>

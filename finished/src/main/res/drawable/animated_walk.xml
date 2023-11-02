@@ -23,12 +23,7 @@
             android:viewportWidth="240"
             android:viewportHeight="240">
             <group android:name="_R_G">
-                <group android:name="_R_G_L_6_G">
-                    <path
-                        android:name="_R_G_L_6_G_S"
-                        android:fillColor="#000000"
-                        android:pathData="M0,0 L240,0 L240,240 L0,240z" />
-                </group>
+
                 <group
                     android:name="_R_G_L_5_G"
                     android:translateX="129.5"
