@@ -17,7 +17,6 @@ package com.android.example.wear.ongoingactivity.presentation
 
 import android.Manifest
 import android.os.Build
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
