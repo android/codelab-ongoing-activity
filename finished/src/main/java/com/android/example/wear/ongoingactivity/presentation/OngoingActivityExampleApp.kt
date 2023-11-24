@@ -17,6 +17,7 @@ package com.android.example.wear.ongoingactivity.presentation
 
 import android.Manifest
 import android.os.Build
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,6 +26,7 @@ import com.android.example.wear.ongoingactivity.MainViewModel
 import com.android.example.wear.ongoingactivity.MainViewModelFactory
 import com.android.example.wear.ongoingactivity.data.WalkingWorkoutsRepository
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 
@@ -38,12 +40,17 @@ fun OngoingActivityExampleApp(
     val permissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
     } else {
-        null
+        // Below T, POST_NOTIFICATIONS does not need to be requested at runtime but must still be
+        // specified in the Manifest. Therefore, permissionState is created such that it is already
+        // in the granted state.
+        object: PermissionState {
+            override val permission = "no_runtime_permission_required"
+            override val status = PermissionStatus.Granted
+            override fun launchPermissionRequest() { }
+        }
     }
 
-    if (permissionState?.status == PermissionStatus.Granted ||
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
-    ) {
+    if (permissionState.status == PermissionStatus.Granted) {
         val viewModel: MainViewModel = viewModel(
             factory = MainViewModelFactory(repository),
         )
@@ -60,7 +67,7 @@ fun OngoingActivityExampleApp(
         )
     } else {
         PermissionRequiredScreen(
-            onPermissionClick = { permissionState?.launchPermissionRequest() },
+            onPermissionClick = { permissionState.launchPermissionRequest() },
         )
     }
 }

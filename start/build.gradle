@@ -71,7 +71,6 @@ dependencies {
     implementation libs.wear.compose.foundation
     implementation(libs.androidx.compose.ui.tooling)
     implementation libs.androidx.lifecycle.viewmodel.compose
-//    implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.androidx.lifecycle.runtime.compose
 
     implementation libs.compose.ui.tooling
