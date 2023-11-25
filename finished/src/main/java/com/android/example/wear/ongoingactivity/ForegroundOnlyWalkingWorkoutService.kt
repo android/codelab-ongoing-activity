@@ -60,7 +60,7 @@ import kotlinx.coroutines.launch
  */
 class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
     private val walkingWorkoutsRepository: WalkingWorkoutsRepository by lazy {
-        (application as MainApplication).repository
+        (application as MainApplication).walkingWorkoutsRepository
     }
 
     private lateinit var notificationManager: NotificationManager

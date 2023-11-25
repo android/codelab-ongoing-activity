@@ -15,6 +15,7 @@
  */
 package com.android.example.wear.ongoingactivity.presentation
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import com.android.example.wear.ongoingactivity.R
 @Composable
 fun PermissionRequiredScreen(
     onPermissionClick: () -> Unit,
+    @StringRes buttonLabelResId: Int
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -59,7 +61,7 @@ fun PermissionRequiredScreen(
                     onClick = onPermissionClick,
                 ) {
                     Text(
-                        text = stringResource(R.string.show_permissions),
+                        text = stringResource(buttonLabelResId),
                     )
                 }
             }

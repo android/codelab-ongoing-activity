@@ -16,13 +16,18 @@
 package com.android.example.wear.ongoingactivity
 
 import android.app.Application
+import com.android.example.wear.ongoingactivity.data.PermissionStateDataStore
 import com.android.example.wear.ongoingactivity.data.WalkingWorkoutsRepository
 
 /**
  * Sets up repository for all walking workout data.
  */
 class MainApplication : Application() {
-    val repository by lazy {
+    val walkingWorkoutsRepository by lazy {
         WalkingWorkoutsRepository.getInstance(applicationContext)
+    }
+
+    val permissionStateDataStore by lazy {
+        PermissionStateDataStore(applicationContext)
     }
 }

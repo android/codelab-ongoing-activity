@@ -15,7 +15,7 @@
  */
 plugins {
     id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
 }
 
 android {
@@ -79,8 +79,6 @@ dependencies {
     // Permissions
     implementation(libs.accompanist.permissions)
 
-
-    // TODO: Review dependencies for Ongoing Activity.
     implementation libs.androidx.wear.ongoing
     // Includes LocusIdCompat and new Notification categories for Ongoing Activity.
     implementation libs.androidx.core.ktx
@@ -89,11 +87,6 @@ dependencies {
     implementation libs.androidx.datastore.preferences
 
     // Lifecycle components
-//    implementation libs.androidx.lifecycle.viewmodel.ktx
-//    implementation libs.androidx.lifecycle.runtime.ktx
-//    implementation libs.androidx.lifecycle.livedata.ktx
-//    implementation libs.androidx.lifecycle.common.java8
-//    implementation libs.androidx.lifecycle.extensions
     implementation libs.androidx.lifecycle.service
 
     // Coroutines

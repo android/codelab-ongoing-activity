@@ -32,7 +32,11 @@
 
     <!-- Permissions strings -->
     <string name="permissions_explanation">
-         %1$s requires permission to show Ongoing Activity.
+        %1$s requires permission to show Ongoing Activity.
+    </string>
+    <string name="permissions_hard_denied">
+        Permission required to show Ongoing Activity.
     </string>
     <string name="show_permissions">Launch</string>
+    <string name="show_settings">Show Settings</string>
 </resources>

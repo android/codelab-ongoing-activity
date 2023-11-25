@@ -92,7 +92,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             OngoingActivityExampleTheme {
                 OngoingActivityExampleApp(
-                    repository = (application as MainApplication).repository,
+                    repository = (application as MainApplication).walkingWorkoutsRepository,
+                    permissionStateDataStore = (application as MainApplication).permissionStateDataStore,
                     onStartStopClick = { isWalkingActive ->
                         if (isWalkingActive) {
                             foregroundOnlyWalkingWorkoutService?.stopWalkingWorkout()
