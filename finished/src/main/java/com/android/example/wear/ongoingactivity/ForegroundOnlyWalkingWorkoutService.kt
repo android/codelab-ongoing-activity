@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2021 The Android Open Source Project
+ * Copyright 2021 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,6 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
@@ -61,7 +60,7 @@ import kotlinx.coroutines.launch
  */
 class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
     private val walkingWorkoutsRepository: WalkingWorkoutsRepository by lazy {
-        (application as MainApplication).repository
+        (application as MainApplication).walkingWorkoutsRepository
     }
 
     private lateinit var notificationManager: NotificationManager
@@ -90,10 +89,11 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
         super.onCreate()
         Log.d(TAG, "onCreate()")
 
-        walkingWorkoutsRepository.activeWalkingWorkoutFlow.asLiveData().observe(this) {
-                active ->
-            if (walkingWorkoutActive != active) {
-                walkingWorkoutActive = active
+        lifecycleScope.launch {
+            walkingWorkoutsRepository.activeWalkingWorkoutFlow.collect { isActive ->
+                if (walkingWorkoutActive != isActive) {
+                    walkingWorkoutActive = isActive
+                }
             }
         }
 
@@ -160,7 +160,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
     }
 
     private fun notForegroundService() {
-        stopForeground(true)
+        stopForeground(STOP_FOREGROUND_REMOVE)
         serviceRunningInForeground = false
         configurationChange = false
     }
@@ -215,7 +215,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
         for (walkingPoints in 0 until 100) {
             if (serviceRunningInForeground) {
                 val notification = generateNotification(
-                    getString(R.string.walking_points_text, walkingPoints)
+                    getString(R.string.walking_points_text, walkingPoints),
                 )
                 notificationManager.notify(NOTIFICATION_ID, notification)
             }
@@ -244,7 +244,10 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
 
         // 1. Create Notification Channel.
         val notificationChannel = NotificationChannel(
-            NOTIFICATION_CHANNEL_ID, titleText, NotificationManager.IMPORTANCE_DEFAULT)
+            NOTIFICATION_CHANNEL_ID,
+            titleText,
+            NotificationManager.IMPORTANCE_DEFAULT,
+        )
 
         // Adds NotificationChannel to system. Attempting to create an
         // existing notification channel with its original values performs
@@ -263,11 +266,17 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
         cancelIntent.putExtra(EXTRA_CANCEL_WORKOUT_FROM_NOTIFICATION, true)
 
         val servicePendingIntent = PendingIntent.getService(
-            this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT
+            this,
+            0,
+            cancelIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 
         val activityPendingIntent = PendingIntent.getActivity(
-            this, 0, launchActivityIntent, 0
+            this,
+            0,
+            launchActivityIntent,
+            PendingIntent.FLAG_IMMUTABLE,
         )
 
         // 4. Build and issue the notification.
@@ -287,13 +296,14 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
             .setCategory(NotificationCompat.CATEGORY_WORKOUT)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .addAction(
-                R.drawable.ic_walk, getString(R.string.launch_activity),
-                activityPendingIntent
+                R.drawable.ic_walk,
+                getString(R.string.launch_activity),
+                activityPendingIntent,
             )
             .addAction(
                 R.drawable.ic_cancel,
                 getString(R.string.stop_walking_workout_notification_text),
-                servicePendingIntent
+                servicePendingIntent,
             )
 
         // TODO: Create an Ongoing Activity.

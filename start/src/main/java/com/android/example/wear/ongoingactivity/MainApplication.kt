@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2021 The Android Open Source Project
+ * Copyright 2021 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,13 +16,18 @@
 package com.android.example.wear.ongoingactivity
 
 import android.app.Application
+import com.android.example.wear.ongoingactivity.data.PermissionStateDataStore
 import com.android.example.wear.ongoingactivity.data.WalkingWorkoutsRepository
 
 /**
  * Sets up repository for all walking workout data.
  */
 class MainApplication : Application() {
-    val repository by lazy {
+    val walkingWorkoutsRepository by lazy {
         WalkingWorkoutsRepository.getInstance(applicationContext)
+    }
+
+    val permissionStateDataStore by lazy {
+        PermissionStateDataStore(applicationContext)
     }
 }

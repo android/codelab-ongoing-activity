@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2021 The Android Open Source Project
+ * Copyright 2021 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +21,10 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
-import android.view.View
 import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
-import com.android.example.wear.ongoingactivity.databinding.ActivityMainBinding
+import androidx.activity.compose.setContent
+import com.android.example.wear.ongoingactivity.presentation.OngoingActivityExampleApp
+import com.android.example.wear.ongoingactivity.theme.OngoingActivityExampleTheme
 
 /**
  * The app's main purpose is to teach developers how to use Wear's Ongoing Activity API via the
@@ -63,31 +62,6 @@ import com.android.example.wear.ongoingactivity.databinding.ActivityMainBinding
  * @see <a href="https://developer.android.com/training/location">location guides</a>.
  */
 class MainActivity : ComponentActivity() {
-    private lateinit var binding: ActivityMainBinding
-
-    private val mainViewModel: MainViewModel by viewModels {
-        MainViewModelFactory((application as MainApplication).repository)
-    }
-
-    // Status of the walking workout. Only updated when different from current value and pulled from
-    // the WalkingWorkoutDataStore via the repository.
-    private var activeWalkingWorkout = false
-        set(newActiveStatus) {
-            if (field != newActiveStatus) {
-                field = newActiveStatus
-                if (newActiveStatus) {
-                    binding.startStopWalkingWorkoutButton.text =
-                        getString(R.string.stop_walking_workout_button_text)
-                } else {
-                    binding.startStopWalkingWorkoutButton.text =
-                        getString(R.string.start_walking_workout_button_text)
-                }
-                updateOutput(walkingPoints)
-            }
-        }
-
-    private var walkingPoints = 0
-
     // The remaining variables are related to the binding/monitoring/interacting with the
     // service that gathers all the data to calculate walking points.
     private var foregroundOnlyServiceBound = false
@@ -115,17 +89,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        mainViewModel.walkingPointsFlow.observe(this) { points ->
-            walkingPoints = points
-            updateOutput(walkingPoints)
-        }
-
-        mainViewModel.activeWalkingWorkoutFlow.observe(this) { active ->
-            Log.d(TAG, "Workout Status changed: $activeWalkingWorkout")
-            activeWalkingWorkout = active
+        setContent {
+            OngoingActivityExampleTheme {
+                OngoingActivityExampleApp(
+                    repository = (application as MainApplication).walkingWorkoutsRepository,
+                    permissionStateDataStore = (application as MainApplication).permissionStateDataStore,
+                    onStartStopClick = { isWalkingActive ->
+                        if (isWalkingActive) {
+                            foregroundOnlyWalkingWorkoutService?.stopWalkingWorkout()
+                        } else {
+                            foregroundOnlyWalkingWorkoutService?.startWalkingWorkout()
+                        }
+                    },
+                )
+            }
         }
     }
 
@@ -142,21 +119,6 @@ class MainActivity : ComponentActivity() {
             foregroundOnlyServiceBound = false
         }
         super.onStop()
-    }
-
-    fun onClickWalkingWorkout(view: View) {
-        Log.d(TAG, "onClickWalkingWorkout()")
-        if (activeWalkingWorkout) {
-            foregroundOnlyWalkingWorkoutService?.stopWalkingWorkout()
-        } else {
-            foregroundOnlyWalkingWorkoutService?.startWalkingWorkout()
-        }
-    }
-
-    private fun updateOutput(points: Int) {
-        Log.d(TAG, "updateOutput()")
-        val output = getString(R.string.walking_points_text, points)
-        binding.outputTextView.text = output
     }
 
     companion object {
