@@ -22,6 +22,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.content.res.Configuration
 import android.os.Binder
 import android.os.IBinder
@@ -146,7 +147,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
             val notification =
                 generateNotification(getString(R.string.walking_workout_notification_started_text))
             // startForeground takes care of notificationManager.notify(...).
-            startForeground(NOTIFICATION_ID, notification)
+            startForeground(NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
             serviceRunningInForeground = true
         }
 

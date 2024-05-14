@@ -20,6 +20,12 @@
     <!-- Required for foreground services on P+. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <!--
+      Required for the datasync foreground service type from Android 14 onwards, see:
+      https://developer.android.com/about/versions/14/changes/fgs-types-required
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <!-- POST_NOTIFICATIONS is required for posting the Ongoing Activity -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
