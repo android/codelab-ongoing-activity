@@ -52,7 +52,7 @@ fun OngoingActivityExampleApp(
         // Below T, POST_NOTIFICATIONS does not need to be requested at runtime but must still be
         // specified in the Manifest. Therefore, permissionState is created such that it is already
         // in the granted state.
-        object: PermissionState {
+        object : PermissionState {
             override val permission = "no_runtime_permission_required"
             override val status = PermissionStatus.Granted
             override fun launchPermissionRequest() { }
@@ -97,14 +97,14 @@ fun OngoingActivityExampleApp(
             // now, as opposed to the false seen from shouldShowRationale on first ever launch
             PermissionRequiredScreen(
                 onPermissionClick = { permissionState.launchPermissionRequest() },
-                buttonLabelResId = R.string.show_permissions
+                buttonLabelResId = R.string.show_permissions,
             )
         } else if (hasPreviouslyShown == ShownRationaleStatus.HAS_SHOWN) {
             // Rationale has been shown previously, but the user has decided not to grant permission
             // Offer the user the option to go to permission settings.
             PermissionRequiredScreen(
                 onPermissionClick = { launchPermissionsSettings(context) },
-                buttonLabelResId = R.string.show_settings
+                buttonLabelResId = R.string.show_settings,
             )
         } else if (hasPreviouslyShown == ShownRationaleStatus.HAS_NOT_SHOWN) {
             // First launch of permissions, show the permission request without any rationale.

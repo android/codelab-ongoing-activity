@@ -34,7 +34,7 @@ import com.android.example.wear.ongoingactivity.R
 @Composable
 fun PermissionRequiredScreen(
     onPermissionClick: () -> Unit,
-    @StringRes buttonLabelResId: Int
+    @StringRes buttonLabelResId: Int,
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
