@@ -15,18 +15,19 @@
  */
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
+    alias(libs.plugins.org.jetbrains.kotlin.plugin.compose)
 }
 
 android {
-    compileSdk 34
+    compileSdk 36
     
     namespace "com.android.example.wear.ongoingactivity"
 
     defaultConfig {
         applicationId "com.android.example.wear.ongoingactivity"
         minSdk 30
-        targetSdk 34
+        targetSdk 36
         versionCode 1
         versionName "1.0"
 
@@ -43,15 +44,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.majorVersion
+
+    kotlin {
+        jvmToolchain(17)
     }
-    buildFeatures {
-        compose true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.compose.compiler.get()
-    }
+
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
