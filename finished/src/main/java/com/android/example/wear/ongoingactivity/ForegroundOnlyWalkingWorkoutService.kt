@@ -15,6 +15,7 @@
  */
 package com.android.example.wear.ongoingactivity
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -27,6 +28,7 @@ import android.content.res.Configuration
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
@@ -65,6 +67,8 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
     }
 
     private lateinit var notificationManager: NotificationManager
+    private lateinit var notification: Notification
+    private lateinit var ongoingActivity: OngoingActivity
 
     /*
      * Checks whether the bound activity has really gone away (in which case a foreground service
@@ -144,8 +148,9 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
         // we do nothing.
         if (!configurationChange && walkingWorkoutActive) {
             Log.d(TAG, "Start foreground service")
-            val notification =
+            notification =
                 generateNotification(getString(R.string.walking_workout_notification_started_text))
+            updateOngoingActivity(getString(R.string.walking_workout_notification_started_text))
             // startForeground takes care of notificationManager.notify(...).
             startForeground(NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
             serviceRunningInForeground = true
@@ -166,6 +171,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
         configurationChange = false
     }
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     fun startWalkingWorkout() {
         Log.d(TAG, "startWalkingWorkout()")
 
@@ -212,13 +218,12 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
     // Normally, you would listen to the location and sensor data and calculate your points with
     // an algorithm, but we are mocking the data to simply this so we can focus on learning about
     // the Ongoing Activity API.
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private suspend fun mockSensorAndLocationForWalkingWorkout() {
         for (walkingPoints in 0 until 100) {
             if (serviceRunningInForeground) {
-                val notification = generateNotification(
-                    getString(R.string.walking_points_text, walkingPoints),
-                )
-                notificationManager.notify(NOTIFICATION_ID, notification)
+                val updatedStatus = getString(R.string.walking_points_text, walkingPoints)
+                updateOngoingActivity(updatedStatus)
             }
             Log.d(TAG, "mockSensorAndLocationForWalkingWorkout(): $walkingPoints")
             walkingWorkoutsRepository.setWalkingPoints(walkingPoints)
@@ -313,7 +318,7 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
             .addTemplate(mainText)
             .build()
 
-        val ongoingActivity =
+        ongoingActivity =
             OngoingActivity.Builder(applicationContext, NOTIFICATION_ID, notificationBuilder)
                 // Sets icon that will appear on the watch face in active mode. If it isn't set,
                 // the watch face will use the static icon in active mode.
@@ -338,6 +343,15 @@ class ForegroundOnlyWalkingWorkoutService : LifecycleService() {
         ongoingActivity.apply(applicationContext)
 
         return notificationBuilder.build()
+    }
+
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+    private fun updateOngoingActivity(statusText: String) {
+        val status = Status.Builder()
+            .addTemplate(statusText)
+            .build()
+
+        ongoingActivity.update(this, status)
     }
 
     /**
